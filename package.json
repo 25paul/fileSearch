@@ -1,0 +1,21 @@
+{
+  "name": "filesearch",
+  "version": "1.0.0",
+  "description": "",
+  "main": "src/main.js",
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-builder --mac --x64"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "electron": "^10.1.2",
+    "electron-builder": "^22.8.1",
+    "electron-packager": "^15.1.0"
+  },
+  "dependencies": {
+    "file-saver": "^2.0.2",
+    "jszip": "^3.5.0"
+  }
+}
