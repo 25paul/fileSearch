@@ -1,22 +1,3 @@
-// 创建新窗口
-// remote 
-// const BrowserWindow = require('electron').remote.BrowserWindow;
-// const btn = document.querySelector('#btn');
-// console.log('111')
-// window.onload = ()=>{
-//     console.log('111')
-//     btn.onclick = ()=>{
-//         newWindow = new BrowserWindow({
-//             width: 300,
-//             height:300,
-//         })
-//         newWindow.loadFile(require("path").join(__dirname, 'index_2.html'));
-//         newWindow.on('close',()=>{
-//             newWindow = null;
-//         })
-//     }
-// }
-
 const path = require("path");
 const fs = require("fs");
 const JSZip = require("jszip");
@@ -51,56 +32,47 @@ let selectFiles = [];    //选择的文件列表
 
 
 window.onload = ()=>{
-    searchBtn.onclick = ()=>{
+
+    let repeatOrspace = function (arr) {
+        let repeatArr = [...new Set(arr)];
+        let spaceArr = repeatArr.filter(function (i) {
+            return i && i.trim();
+        });
+        return spaceArr;
+    }
+
+    let searchHandle = function () {
         searchFilelist = [];
         pageCourt = 0;    
         curPageIndex = 0;
         selectFiles = [];
         resultContainer.innerHTML = '';
+        pageIndex.innerHTML = '';
+        nextPage.style.display = "none";
         let inputVal = searchInput.value;
+        let inputValArr = repeatOrspace(inputVal.split(' '))
         noValueTip.style.display = "none";
         unworkValueTip.style.display = "none";
-        if(inputVal.length > 0){
+        searchResult.style.display = "block";
+        if(inputVal.length > 0 && inputValArr.length > 0){
             fs.readdir(pathName, function(err, files){console.log(files)
-// fs.readFile(pathName+"/"+files[0], function (err, data) {
-//     if (err) {
-//         return console.error(err);
-//     }
-//     console.log("异步读取: " + data.toString());
-
-// var zip = new JSZip();
-// zip.file(files[0], data);
-// // zip.file(files[0]);
-// // var img = zip.folder("images");
-// // img.file("smile.gif", imgData, {base64: true});
-// zip.generateAsync({type:"blob"})
-// .then(function(content) {
-//     // see FileSaver.js
-//     saveAs(content, "example.zip");
-// });
-//     });
-
-
-// var imgData = ["2.png"]
-// var zip = new JSZip();
-// // zip.file("Hello.txt", "Hello World\n");
-// zip.file(files[0]);
-// // var img = zip.folder("images");
-// // img.file("smile.gif", imgData, {base64: true});
-// zip.generateAsync({type:"blob"})
-// .then(function(content) {
-//     // see FileSaver.js
-//     saveAs(content, "example.zip");
-// });
                 let curPageStart = curPageIndex * 10;
-                let curPageEnd = curPageIndex * 10 + 9;
+                let curPageEnd = curPageIndex * 10 + 10;
 
                 let dirs = [];
                 let oFrag=document.createDocumentFragment();
                 for (let i=0; i<files.length; i++){
-                    if(files[i].indexOf(inputVal) > 0 || files[i].indexOf(inputVal) === 0) {
-                        searchFilelist.push(files[i])
-                    }    
+                    for (let j=0; j<inputValArr.length; j++){
+                        if(files[i].indexOf(inputValArr[j]) > 0 || files[i].indexOf(inputValArr[j]) === 0) {
+                            searchFilelist.push(files[i])
+                        }    
+                    }   
+                }
+
+                if (searchFilelist.length <= 0) {
+                    searchResult.style.display = "none";
+                    unworkValueTip.style.display = "block";
+                    return;
                 }
 
                 pageCourt = Math.ceil(searchFilelist.length/10);
@@ -108,24 +80,28 @@ window.onload = ()=>{
                 if (pageCourt === 1) {
                     curPageEnd = searchFilelist.length;
                 } else {
-                    curPageEnd = curPageIndex * 10 + 9;
+                    curPageEnd = curPageIndex * 10 + 10;
                 }
 
                 for (let i=curPageStart; i<curPageEnd; i++){
                     let oDiv=document.createElement('div');
                     oDiv.setAttribute('class', 'search-list');
                     oDiv.setAttribute('filename', searchFilelist[i]);
+                    oDiv.setAttribute('title', searchFilelist[i]);
                     let selectDiv=document.createElement('div');
                     selectDiv.setAttribute('class', 'select-box');
-                    oDiv.appendChild(selectDiv)
-                    let txt = document.createTextNode(searchFilelist[i])
-                    oDiv.appendChild(txt);
+                    oDiv.appendChild(selectDiv);
+                    let textDiv=document.createElement('div');
+                    textDiv.setAttribute('class', 'select-text');
+                    let txt = document.createTextNode(searchFilelist[i]);
+                    textDiv.appendChild(txt);
+                    oDiv.appendChild(textDiv);
                     oFrag.appendChild(oDiv);
                 }
                 resultContainer.appendChild(oFrag);
-                if(resultContainer.childNodes.length === 0){
-                    unworkValueTip.style.display = "block";
-                } 
+                // if(resultContainer.childNodes.length === 0){
+                //     unworkValueTip.style.display = "block";
+                // } 
 
                 let oPageFrag=document.createDocumentFragment();
                 if(pageCourt > 1){
@@ -138,42 +114,46 @@ window.onload = ()=>{
                         oPageFrag.appendChild(oDiv);
                     }
                     pageIndex.appendChild(oPageFrag);
+                    nextPage.style.display = "block";
                 }
-                
-
-                // var zip = new JSZip();
-                // for (let i=0; i<fileList.length; i++){
-                //     var data = fs.readFileSync(pathName+"/"+fileList[i]);
-                //     var result = zip.folder("result");
-                //     result.file(fileList[i], data);
-                // }
-                // zip.generateAsync({type:"blob"})
-                // .then(function(content) {
-                //     saveAs(content, "result.zip");
-                // });
-
-
-                // (function iterator(i){
-                //   if(i == files.length) {
-                //     console.log(dirs);
-                //     return ;
-                //     }
-                //   fs.stat(path.join(pathName, files[i]), function(err, data){     
-                //     if(data.isFile()){               
-                //         dirs.push(files[i]);
-                //     }
-                //     iterator(i+1);
-                //    });   
-                // })(0);
             });
         } else {
+            searchResult.style.display = "none";
             noValueTip.style.display = "block";
         }
+    }
+
+    searchBtn.onclick = ()=>{
+        searchHandle();
         
+    }
+
+    searchInput.onkeypress = (e) => {
+        if(e.keyCode == 13) {  
+            searchHandle();
+        }  
+    }
+
+    searchInput.oninput = (e) => {
+        if (!e.target.value) {
+            searchResult.style.display = "none";
+            resultContainer.innerHTML = '';
+            pageIndex.innerHTML = '';
+            nextPage.style.display = "none";
+        }
     }
 
     //选择文件
     resultContainer.onclick = (e) => {
+        // 去掉全选选择的符号
+        let selectAllClass = selectAll.getAttribute('class');
+        let selectAllClassIndex = selectAllClass.split(' ').indexOf('selected');
+        if(selectAllClassIndex >=0){
+            selectAllClass = selectAllClass.split(' ');
+            selectAllClass.splice(selectAllClassIndex, 1)
+            selectAllClass = selectAllClass.join(' ');
+            selectAll.setAttribute('class', selectAllClass)
+        }
         console.log(e.target)
         let divClass = e.target.getAttribute('class').split(' ')
         if (divClass.indexOf('selected') < 0) {
@@ -196,31 +176,40 @@ window.onload = ()=>{
 
     // 全选当前页面文件
     selectAll.onclick = (e) => {
-        let divClass = e.target.getAttribute('class').split(' ')
+        let divClass = e.target.getAttribute('class').split(' ');
+        var selectChild = resultContainer.querySelectorAll('.search-list');
         if (divClass.indexOf('selected') < 0) {
             divClass.push('selected');
             divClass = divClass.join(' ')
-            e.target.setAttribute('class', divClass)
+            e.target.setAttribute('class', divClass);
+            for (let i=0; i<selectChild.length; i++) {
+                let filename = selectChild[i].getAttribute('filename');
+                if (selectFiles.indexOf(filename) < 0){
+                    selectFiles.push(filename)
+                }
+                let itemClass = selectChild[i].getAttribute('class').split(' ');
+                if (itemClass.indexOf('selected') < 0) {
+                    itemClass.push('selected');
+                    itemClass = itemClass.join(' ')
+                    selectChild[i].setAttribute('class', itemClass)
+                }
+            }
         } else {
             let index = divClass.indexOf('selected'); 
             divClass.splice(index, 1); 
-            e.target.setAttribute('class', divClass)
-        }
-        var selectChild = resultContainer.querySelectorAll('.search-list');
-        for (let i=0; i<selectChild.length; i++) {
-            let filename = selectChild[i].getAttribute('filename');
-            if (selectFiles.indexOf(filename) <= 0){
-                selectFiles.push(filename)
-            }
-            let itemClass = selectChild[i].getAttribute('class').split(' ');
-            if (itemClass.indexOf('selected') < 0) {
-                itemClass.push('selected');
-                itemClass = itemClass.join(' ')
-                selectChild[i].setAttribute('class', itemClass)
-            } else {
-                let index = itemClass.indexOf('selected'); 
-                itemClass.splice(index, 1); 
-                selectChild[i].setAttribute('class', itemClass)
+            e.target.setAttribute('class', divClass);
+            for (let i=0; i<selectChild.length; i++) {
+                let filename = selectChild[i].getAttribute('filename');
+                let selectFilesIndex = selectFiles.indexOf(filename)
+                if (selectFilesIndex >= 0){
+                    selectFiles.splice(selectFilesIndex, 1);
+                }
+                let itemClass = selectChild[i].getAttribute('class').split(' ');
+                if (itemClass.indexOf('selected') >= 0) {
+                    let index = itemClass.indexOf('selected'); 
+                    itemClass.splice(index, 1); 
+                    selectChild[i].setAttribute('class', itemClass)
+                }
             }
         }
     }
@@ -234,7 +223,7 @@ window.onload = ()=>{
             let curPageStart = curPageIndex * 10;
             let curPageEnd
             if (curPageIndex < pageCourt - 1) {
-                curPageEnd = curPageIndex * 10 + 9;
+                curPageEnd = curPageIndex * 10 + 10;
             } else {
                 curPageEnd = searchFilelist.length;
             }
@@ -248,11 +237,16 @@ window.onload = ()=>{
                     oDiv.setAttribute('class', 'search-list');
                 }
                 oDiv.setAttribute('filename', searchFilelist[i]);
+                oDiv.setAttribute('title', searchFilelist[i]);
                 let selectDiv=document.createElement('div');
                 selectDiv.setAttribute('class', 'select-box');
                 oDiv.appendChild(selectDiv)
-                let txt = document.createTextNode(searchFilelist[i])
-                oDiv.appendChild(txt);
+                let textDiv=document.createElement('div');
+                textDiv.setAttribute('class', 'select-text');
+                
+                let txt = document.createTextNode(searchFilelist[i]);
+                textDiv.appendChild(txt);
+                oDiv.appendChild(textDiv);
                 oFrag.appendChild(oDiv);
             }
             resultContainer.appendChild(oFrag);
@@ -269,7 +263,7 @@ window.onload = ()=>{
             let curPageStart = curPageIndex * 10;
             let curPageEnd
             if (curPageIndex < pageCourt - 1) {
-                curPageEnd = curPageIndex * 10 + 9;
+                curPageEnd = curPageIndex * 10 + 10;
             } else {
                 curPageEnd = searchFilelist.length;
             }
@@ -277,6 +271,7 @@ window.onload = ()=>{
             for (let i=curPageStart; i<curPageEnd; i++){
                 let oDiv=document.createElement('div');
                 oDiv.setAttribute('filename', searchFilelist[i]);
+                oDiv.setAttribute('title', searchFilelist[i]);
                 if(selectFiles.indexOf(searchFilelist[i]) >= 0) {
                     oDiv.setAttribute('class', 'search-list selected');
                 } else {
@@ -285,8 +280,11 @@ window.onload = ()=>{
                 let selectDiv=document.createElement('div');
                 selectDiv.setAttribute('class', 'select-box');
                 oDiv.appendChild(selectDiv)
-                let txt = document.createTextNode(searchFilelist[i])
-                oDiv.appendChild(txt);
+                let textDiv=document.createElement('div');
+                textDiv.setAttribute('class', 'select-text');
+                let txt = document.createTextNode(searchFilelist[i]);
+                textDiv.appendChild(txt);
+                oDiv.appendChild(textDiv);
                 oFrag.appendChild(oDiv);
             }
             resultContainer.appendChild(oFrag);
@@ -311,7 +309,6 @@ window.onload = ()=>{
             .then(function(content) {
                 saveAs(content, "result.zip");
             });
-            selectFiles = [];
         } else {
             alert('请选择文件！')
         }
