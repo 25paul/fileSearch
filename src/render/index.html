@@ -162,7 +162,7 @@
             margin-right: 12px;
             cursor: pointer;
         }
-        .next-page {
+        .next-page, .prev-page {
             width: 60px;
             height: 30px;
             border-radius: 4px;
@@ -171,6 +171,9 @@
             box-sizing: border-box;
             border: 1px solid #aaa;
             cursor: pointer;
+        }
+        .prev-page {
+            margin-right: 12px;
         }
 
     </style>
@@ -190,6 +193,7 @@
             <div class="result-container">
             </div>
             <div class="result-page">
+                <div class="prev-page" style="display: none;">上一页</div>
                 <div class="page-index"></div>
                 <div class="next-page" style="display: none;">下一页</div>
             </div>

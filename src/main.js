@@ -14,5 +14,5 @@ app.on("ready", () => {
   mainWindow.on("close", () => {
     mainWindow = null;
   });
-  // mainWindow.webContents.openDevTools();   //启动开发者工具
+  mainWindow.webContents.openDevTools();   //启动开发者工具
 });
