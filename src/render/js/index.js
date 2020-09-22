@@ -441,7 +441,9 @@ window.onload = ()=>{
         if (selectFiles.length > 0) {
             var zip = new JSZip();
             for (let i=0; i<selectFiles.length; i++){
-                var data = fs.readFileSync(pathName+"/"+selectFiles[i]);
+                // let searchFileCon = (selectFiles[i]).match(/\/([^/]*)$/)[1]; 
+                // var data = fs.readFileSync(pathName+"/"+searchFileCon);
+                var data = fs.readFileSync(selectFiles[i]);
                 var result = zip.folder("result");
                 result.file(selectFiles[i], data);
             }
