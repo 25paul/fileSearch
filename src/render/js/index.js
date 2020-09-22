@@ -100,6 +100,7 @@ window.onload = ()=>{
             resultContainer.innerHTML = '';
             pageIndex.innerHTML = '';
             nextPage.style.display = "none";
+            prevPage.style.display = "none";
             let inputVal = searchInput.value;
             let inputValArr = util.repeatOrspace(inputVal.split(' '))
             noValueTip.style.display = "none";
@@ -315,6 +316,7 @@ window.onload = ()=>{
             resultContainer.innerHTML = '';
             pageIndex.innerHTML = '';
             nextPage.style.display = "none";
+            prevPage.style.display = "none";
         }
     }
 
@@ -365,22 +367,22 @@ window.onload = ()=>{
                 }
             }
         } else {
-            // let index = divClass.indexOf('selected'); 
-            // divClass.splice(index, 1); 
-            // e.target.setAttribute('class', divClass);
-            // for (let i=0; i<selectChild.length; i++) {
-            //     let filename = selectChild[i].getAttribute('filename');
-            //     let selectFilesIndex = selectFiles.indexOf(filename)
-            //     if (selectFilesIndex >= 0){
-            //         selectFiles.splice(selectFilesIndex, 1);
-            //     }
-            //     let itemClass = selectChild[i].getAttribute('class').split(' ');
-            //     if (itemClass.indexOf('selected') >= 0) {
-            //         let index = itemClass.indexOf('selected'); 
-            //         itemClass.splice(index, 1); 
-            //         selectChild[i].setAttribute('class', itemClass)
-            //     }
-            // }
+            let index = divClass.indexOf('selected'); 
+            divClass.splice(index, 1); 
+            e.target.setAttribute('class', divClass);
+            for (let i=0; i<selectChild.length; i++) {
+                let filename = selectChild[i].getAttribute('filename');
+                let selectFilesIndex = selectFiles.indexOf(filename)
+                if (selectFilesIndex >= 0){
+                    selectFiles.splice(selectFilesIndex, 1);
+                }
+                let itemClass = selectChild[i].getAttribute('class').split(' ');
+                if (itemClass.indexOf('selected') >= 0) {
+                    let index = itemClass.indexOf('selected'); 
+                    itemClass.splice(index, 1); 
+                    selectChild[i].setAttribute('class', itemClass)
+                }
+            }
         }
     }
 
@@ -439,17 +441,20 @@ window.onload = ()=>{
     //导出按钮
     resultExport.onclick = () => {
         if (selectFiles.length > 0) {
+            let time = new Date();
+            let timeFormat = time.getFullYear()+'-'+ (time.getMonth()+1) + '-' + time.getDate();
+            let exportName = '案件文书'+timeFormat;
             var zip = new JSZip();
             for (let i=0; i<selectFiles.length; i++){
                 // let searchFileCon = (selectFiles[i]).match(/\/([^/]*)$/)[1]; 
                 // var data = fs.readFileSync(pathName+"/"+searchFileCon);
                 var data = fs.readFileSync(selectFiles[i]);
-                var result = zip.folder("result");
+                var result = zip.folder(exportName);
                 result.file(selectFiles[i], data);
             }
             zip.generateAsync({type:"blob"})
             .then(function(content) {
-                saveAs(content, "result.zip");
+                saveAs(content, exportName);
             });
         } else {
             alert('请选择文件！')
