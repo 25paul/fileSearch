@@ -118,7 +118,9 @@ window.onload = ()=>{
                 let newFiles = [];
                 for (let i=0; i<inputValArr.length; i++){
                     for (let j=0; j<files.length; j++){
-                        if(files[j].indexOf(inputValArr[i]) >= 0) {
+                        let fileNameArr = (files[j]).match(/([^\\/]+)\.([^\\/]+)/i); 
+                        let fileName = fileNameArr &&  fileNameArr.length > 0? fileNameArr[1] : '';
+                        if(fileName.indexOf(inputValArr[i]) >= 0) {
                             newFiles.push(files[j])
                         }  
                     }
