@@ -21,7 +21,7 @@ let isMac = (u.indexOf('Mac') > -1)
 let isWindow = (u.indexOf('Windows') > -1)
 
  
-var pathName = isMac ? "/users/admin/Documents/test/" : "D:/test/";
+var pathName = isMac ? "/users/admin/Documents/test/" : "C:/test/";
 
 console.log(pathName)
 
