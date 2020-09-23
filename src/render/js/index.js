@@ -168,7 +168,11 @@ window.onload = ()=>{
                 if(pageCourt > 1){
                     for(let i=0; i<pageCourt; i++){
                         let oDiv=document.createElement('div');
-                        oDiv.setAttribute('class','item-index');
+                        if (i === 0) {
+                            oDiv.setAttribute('class','item-index active');
+                        } else {
+                            oDiv.setAttribute('class','item-index');
+                        }
                         oDiv.setAttribute('dataIndex',i)
                         let txt = document.createTextNode(i+1);
                         oDiv.appendChild(txt);
@@ -298,6 +302,30 @@ window.onload = ()=>{
                 oFrag.appendChild(oDiv);
             }
             topHtml.appendChild(oFrag);
+        },
+
+        curPageActive: function (index) {
+            let items = pageIndex.querySelectorAll('.item-index');
+            for(let i=0; i<items.length; i++) {
+                if(parseInt(items[i].getAttribute('dataindex')) === parseInt(index)) {
+                    let itemClass = items[i].getAttribute('class').split(' ');
+                    let activeIndex = itemClass.indexOf('active');
+                    if (activeIndex < 0) {
+                        itemClass.push('active');
+                        itemClass = itemClass.join(' ');
+                        items[i].setAttribute('class', itemClass)
+                    }
+                } else {
+                    let itemClass = items[i].getAttribute('class').split(' ');
+                    let activeIndex = itemClass.indexOf('active');
+                    if (activeIndex >= 0) {
+                        itemClass.splice(activeIndex, 1);
+                        itemClass = itemClass.join(' ');
+                        items[i].setAttribute('class', itemClass);
+                    }
+                    
+                }
+            }
         }
     }
 
@@ -393,6 +421,7 @@ window.onload = ()=>{
         if (e.target.hasAttribute('dataIndex')) {
             resultContainer.innerHTML = '';
             curPageIndex = e.target.getAttribute('dataIndex');
+            util.curPageActive(curPageIndex);
             let curPageStart = curPageIndex * 10;
             let curPageEnd
             if (curPageIndex < pageCourt - 1) {
@@ -411,6 +440,7 @@ window.onload = ()=>{
     nextPage.onclick = () => {
         if (parseInt(curPageIndex) + 1 < pageCourt) {
             curPageIndex = parseInt(curPageIndex) + 1;
+            util.curPageActive(curPageIndex);
             resultContainer.innerHTML = '';
             let curPageStart = curPageIndex * 10;
             let curPageEnd
@@ -426,9 +456,11 @@ window.onload = ()=>{
         }
     }
 
+    //上一页
     prevPage.onclick = () => {
         if (curPageIndex > 0) {
             curPageIndex = curPageIndex - 1;
+            util.curPageActive(curPageIndex);
             resultContainer.innerHTML = '';
             let curPageStart = curPageIndex * 10;
             let curPageEnd = curPageIndex * 10 + 10;
@@ -448,11 +480,11 @@ window.onload = ()=>{
             let exportName = '案件文书'+timeFormat;
             var zip = new JSZip();
             for (let i=0; i<selectFiles.length; i++){
-                // let searchFileCon = (selectFiles[i]).match(/\/([^/]*)$/)[1]; 
+                let searchFileCon = (selectFiles[i]).match(/\/([^/]*)$/)[1]; 
                 // var data = fs.readFileSync(pathName+"/"+searchFileCon);
                 var data = fs.readFileSync(selectFiles[i]);
                 var result = zip.folder(exportName);
-                result.file(selectFiles[i], data);
+                result.file(searchFileCon, data);
             }
             zip.generateAsync({type:"blob"})
             .then(function(content) {
