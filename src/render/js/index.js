@@ -15,13 +15,14 @@ const nextPage = document.querySelector('.next-page')
 const prevPage = document.querySelector('.prev-page')
 const pageIndex = document.querySelector('.page-index')
 const selectAll = document.querySelector('.select-all')
+const alertTip = document.querySelector('.alertTip')
 
 var u = navigator.userAgent, app = navigator.appVersion;
 let isMac = (u.indexOf('Mac') > -1)
 let isWindow = (u.indexOf('Windows') > -1)
 
  
-var pathName = isMac ? "/users/admin/Documents/test/" : "C:/test/";
+var pathName = isMac ? "/users/admin/Documents/test/" : "C:/文书数据源/";
 
 console.log(pathName)
 
@@ -340,7 +341,7 @@ window.onload = ()=>{
         }  
     }
 
-    searchInput.oninput = (e) => {
+    searchInput.oninput = (e) => {console.log(1)
         if (!e.target.value) {
             searchResult.style.display = "none";
             resultContainer.innerHTML = '';
@@ -491,7 +492,12 @@ window.onload = ()=>{
                 saveAs(content, exportName);
             });
         } else {
-            alert('请选择文件！')
+            // alert('请选择文件！')
+            alertTip.style.display = 'block';
+            let timer = setTimeout(() => {
+                alertTip.style.display = 'none';
+                clearTimeout(timer)
+            }, 1500)
         }
     }
 }

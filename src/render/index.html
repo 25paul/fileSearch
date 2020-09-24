@@ -179,8 +179,23 @@
             margin-right: 12px;
         }
 
+        .alertTip {
+            width: 200px;
+            height: 40px;
+            background-color: rgb(170 170 170);
+            border-radius: 4px;
+            line-height: 40px;
+            text-align: center;
+            position: absolute;
+            top: 128px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 99;
+        }
+
     </style>
 </head>
+<body>
     <div class="header">文书检索系统</div>
     <div class="main">
         <div class="title">文书检索</div>
@@ -201,9 +216,10 @@
                 <div class="next-page" style="display: none;">下一页</div>
             </div>
         </div>
-        <div class="no-value-tip" style="display:none">“请输入关键词搜索”</div>
-        <div class="unwork-value-tip" style="display:none">”搜索无结果，换个关键词试试“</div>
+        <div class="no-value-tip" style="display:none">请输入关键词搜索</div>
+        <div class="unwork-value-tip" style="display:none">搜索无结果，换个关键词试试</div>
     </div>
+    <div class="alertTip" style="display: none">请选择文件！</div>
     <script src="./js/index.js"></script>
 </body>
 </html>
